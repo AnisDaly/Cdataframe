@@ -1,18 +1,16 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
-#include <stddef.h>
-
 typedef struct {
-    char *title;
-    int *data;
-    size_t size;
-    size_t capacity;
+    void **donnees;
+    int taille;
+    int capacite;
+    char *nom;
 } Column;
 
-Column *create_column(const char *title);
-void insert_value(Column *col, int value);
-void delete_column(Column **col);
-void print_column(const Column *col);
+Column *creerColonne(const char *nom, int capacite);
+void insererDonnee(Column *col, void *donnee);
+void afficherColonne(const Column *col);
+void libererColonne(Column *col);
 
 #endif
