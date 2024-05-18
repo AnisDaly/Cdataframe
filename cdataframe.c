@@ -2,32 +2,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-CDataframe *create_cdataframe(size_t initial_capacity) {
-    CDataframe *df = malloc(sizeof(*df));
-    if (df) {
-        df->columns = malloc(initial_capacity * sizeof(Column *));
-        df->num_columns = 0;
-    }
-    return df;
+void initialiserCDataframe(CDataframe *cdf, int capacite) {
+    cdf->colonnes = malloc(sizeof(Column*) * capacite);
+    cdf->nombre_colonnes = 0;
+    cdf->capacite = capacite;
 }
 
-void add_column(CDataframe *df, Column *col) {
-    df->columns[df->num_columns++] = col;
-}
-
-void delete_cdataframe(CDataframe **df) {
-    if (df && *df) {
-        for (size_t i = 0; i < (*df)->num_columns; i++) {
-            delete_column(&((*df)->columns[i]));
-        }
-        free((*df)->columns);
-        free(*df);
-        *df = NULL;
+void ajouterColonne(CDataframe *cdf, Column *colonne) {
+    if (cdf->nombre_colonnes < cdf->capacite) {
+        cdf->colonnes[cdf->nombre_colonnes++] = colonne;
+    } else {
+        printf("Le CDataframe a atteint sa capacite maximale.\n");
     }
 }
 
-void print_cdataframe(const CDataframe *df) {
-    for (size_t i = 0; i < df->num_columns; i++) {
-        print_column(df->columns[i]);
+void afficherCDataframe(const CDataframe *cdf) {
+    for (int i = 0; i < cdf->nombre_colonnes; i++) {
+        printf("Colonne %d: %s\n", i, cdf->colonnes[i]->nom);
+        afficherColonne(cdf->colonnes[i]);
     }
+}
+
+void libererCDataframe(CDataframe *cdf) {
+    for (int i = 0; i < cdf->nombre_colonnes; i++) {
+        libererColonne(cdf->colonnes[i]);
+    }
+    free(cdf->colonnes);
 }
