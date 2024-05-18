@@ -4,13 +4,14 @@
 #include "column.h"
 
 typedef struct {
-    Column **columns;
-    size_t num_columns;
+    Column **colonnes;
+    int nombre_colonnes;
+    int capacite;
 } CDataframe;
 
-CDataframe *create_cdataframe(size_t initial_capacity);
-void add_column(CDataframe *df, Column *col);
-void delete_cdataframe(CDataframe **df);
-void print_cdataframe(const CDataframe *df);
+void initialiserCDataframe(CDataframe *cdf, int capacite);
+void ajouterColonne(CDataframe *cdf, Column *colonne);
+void afficherCDataframe(const CDataframe *cdf);
+void libererCDataframe(CDataframe *cdf);
 
 #endif
