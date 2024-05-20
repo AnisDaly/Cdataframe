@@ -33,6 +33,9 @@ int main() {
     // Création du dataframe
     CDataframe *dataframe = creerCDataframe(capacite);
 
+    // Allocation de mémoire pour les noms des colonnes
+    char** nomsColonnes = (char**)malloc(sizeof(char*) * capacite);
+
     while (continuer) {
         printf("\nMenu:\n");
         printf("1. Ajouter une colonne\n");
@@ -49,11 +52,14 @@ int main() {
             case 1: {
                 // Ajout d'une colonne
                 int nombreElements;
+                char nomColonne[100];
+                printf("Entrez le nom de la colonne :\n");
+                scanf("%s", nomColonne);
                 printf("Entrez le type de donnees pour la colonne (0: INT, 1: FLOAT, 2: DOUBLE, 3: CHAR, 4: STRING) :\n");
                 scanf("%d", &type);
                 printf("Combien d'elements souhaitez-vous ajouter dans la colonne ?\n");
                 scanf("%d", &nombreElements);
-                Colonne *colonne = creerColonne("Colonne", type, nombreElements);
+                Colonne *colonne = creerColonne(nomColonne, type, nombreElements);
                 printf("Entrez les elements de la colonne :\n");
                 for (int i = 0; i < nombreElements; i++) {
                     DataValue valeur;
@@ -62,11 +68,12 @@ int main() {
                     insererDonnee(colonne, valeur);
                 }
                 ajouterColonne(dataframe, colonne);
+                nomsColonnes[dataframe->nombreColonnes - 1] = strdup(nomColonne); // Stocker le nom de la colonne
                 break;
             }
             case 2:
                 // Affichage du DataFrame
-                afficherCDataframe(dataframe);
+                afficherCDataframe(dataframe, (const char**)nomsColonnes);
                 break;
             case 3:
                 // Tri d'une colonne
@@ -122,6 +129,10 @@ int main() {
 
     // Libération des ressources
     libererCDataframe(dataframe);
+    for (int i = 0; i < capacite; i++) {
+        free(nomsColonnes[i]);
+    }
+    free(nomsColonnes);
     printf("Programme termine.\n");
     return 0;
 }
