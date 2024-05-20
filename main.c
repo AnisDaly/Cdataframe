@@ -1,44 +1,109 @@
 #include <stdio.h>
 #include "cdataframe.h"
-#include "fonction_avancee.h"
+#include "fonctions_avancee.h"
+
+void saisirDonnee(DataType type, DataValue *valeur) {
+    switch (type) {
+        case INT:
+            scanf("%d", &valeur->int_val);
+            break;
+        case FLOAT:
+            scanf("%f", &valeur->float_val);
+            break;
+        case DOUBLE:
+            scanf("%lf", &valeur->double_val);
+            break;
+        case CHAR:
+            scanf(" %c", &valeur->char_val);
+            break;
+        case STRING:
+            valeur->string_val = malloc(100);  // Allocation d'espace pour une chaîne
+            scanf("%99s", valeur->string_val);
+            break;
+    }
+}
 
 int main() {
-    // Création du dataframe avec une capacité initiale de 3 colonnes
-    CDataframe *dataframe = creerCDataframe(3);
+    int capacite, choix, continuer = 1, type;
+    printf("Entrez la capacite initiale du CDataframe (nombre maximum de colonnes) :\n");
+    scanf("%d", &capacite);
 
-    // Création d'une colonne d'entiers
-    Colonne *colonneInt = creerColonne("Colonne Entiers", INT, 10);
-    for (int i = 10; i > 0; i--) {
-        DataValue valeur;
-        valeur.int_val = i;
-        insererDonnee(colonneInt, valeur);
+    // Création du dataframe
+    CDataframe *dataframe = creerCDataframe(capacite);
+
+    while (continuer) {
+        printf("\nMenu:\n");
+        printf("1. Ajouter une colonne\n");
+        printf("2. Afficher le DataFrame\n");
+        printf("3. Trier une colonne\n");
+        printf("4. Rechercher une valeur\n");
+        printf("5. Calculer les statistiques d'une colonne\n");
+        printf("6. Quitter\n");
+        printf("Entrez votre choix :\n");
+        scanf("%d", &choix);
+
+        switch (choix) {
+            case 1: {
+                // Ajout d'une colonne
+                int nombreElements;
+                printf("Entrez le type de donnees pour la colonne (0: INT, 1: FLOAT, 2: DOUBLE, 3: CHAR, 4: STRING) :\n");
+                scanf("%d", &type);
+                printf("Combien d'elements souhaitez-vous ajouter dans la colonne ?\n");
+                scanf("%d", &nombreElements);
+                Colonne *colonne = creerColonne("Colonne", type, nombreElements);
+                printf("Entrez les elements de la colonne :\n");
+                for (int i = 0; i < nombreElements; i++) {
+                    DataValue valeur;
+                    printf("Entrez l'element %d: ", i + 1);
+                    saisirDonnee(type, &valeur);
+                    insererDonnee(colonne, valeur);
+                }
+                ajouterColonne(dataframe, colonne);
+                break;
+            }
+            case 2:
+                // Affichage du DataFrame
+                afficherCDataframe(dataframe);
+                break;
+            case 3:
+                // Tri d'une colonne
+                printf("Quel est l'index de la colonne à trier ?\n");
+                int indexColonne, ordreTri;
+                scanf("%d", &indexColonne);
+                printf("Voulez-vous trier la colonne en ordre ascendant (1) ou descendant (0) ?\n");
+                scanf("%d", &ordreTri);
+                trierColonne(dataframe->colonnes[indexColonne], ordreTri);
+                break;
+            case 4:
+                // Recherche d'une valeur
+                printf("Quel est l'index de la colonne pour la recherche ?\n");
+                scanf("%d", &indexColonne);
+                DataValue valeurRecherchee;
+                printf("Entrez la valeur a rechercher :\n");
+                saisirDonnee(dataframe->colonnes[indexColonne]->donnees[0].type, &valeurRecherchee);
+                int trouve = rechercheDichotomique(dataframe->colonnes[indexColonne], valeurRecherchee);
+                if (trouve != -1) {
+                    printf("Valeur trouvee à l'indice %d.\n", trouve);
+                } else {
+                    printf("Valeur non trouvee.\n");
+                }
+                break;
+            case 5:
+                // Calcul des statistiques
+                printf("Quel est l'index de la colonne pour calculer les statistiques ?\n");
+                scanf("%d", &indexColonne);
+                calculerStatistiques(dataframe->colonnes[indexColonne]);
+                break;
+            case 6:
+                continuer = 0;
+                break;
+            default:
+                printf("Choix invalide, veuillez reessayer.\n");
+        }
     }
-    ajouterColonne(dataframe, colonneInt);
 
-    // Affichage du dataframe avant le tri
-    printf("Dataframe avant le tri:\n");
-    afficherCDataframe(dataframe);
-
-    // Tri de la colonne d'entiers en ordre ascendant
-    trierColonne(colonneInt, 1);
-    printf("Dataframe après le tri ascendant:\n");
-    afficherCDataframe(dataframe);
-
-    // Recherche d'une valeur dans la colonne triée
-    DataValue valeurRecherchee;
-    valeurRecherchee.int_val = 5;
-    int index = rechercheDichotomique(colonneInt, valeurRecherchee);
-    if (index != -1) {
-        printf("Valeur %d trouvée à l'indice %d.\n", valeurRecherchee.int_val, index);
-    } else {
-        printf("Valeur %d non trouvée.\n", valeurRecherchee.int_val);
-    }
-
-    // Calcul et affichage des statistiques pour la colonne d'entiers
-    calculerStatistiques(colonneInt);
-
-    // Libération de toutes les ressources
+    // Libération des ressources
     libererCDataframe(dataframe);
-
+    printf("Programme termine.\n");
     return 0;
 }
