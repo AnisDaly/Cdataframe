@@ -4,89 +4,86 @@
 #include <string.h>
 
 // Créer une nouvelle colonne avec une capacité initiale
-// Cette fonction initialise une structure Colonne avec un nom, un type de données, et une capacité initiale
 Colonne* creerColonne(const char* nom, DataType type, int capacite) {
-    // Allouer de la mémoire pour la structure Colonne
     Colonne* colonne = (Colonne*)malloc(sizeof(Colonne));
-    // Dupliquer le nom de la colonne
     colonne->nom = strdup(nom);
-    // Allouer de la mémoire pour le tableau de données de la colonne
     colonne->donnees = (Data*)malloc(sizeof(Data) * capacite);
-    // Initialiser les attributs de la colonne
-    colonne->taille = 0;  // Initialiser le nombre d'éléments à 0
-    colonne->capacite = capacite;  // Définir la capacité initiale
-    // Initialiser le type de chaque élément du tableau de données
+    colonne->taille = 0;
+    colonne->capacite = capacite;
     for (int i = 0; i < capacite; i++) {
         colonne->donnees[i].type = type;
     }
-    return colonne;  // Retourner le pointeur vers la nouvelle colonne
+    return colonne;
 }
 
-// Insérer une nouvelle donnée dans la colonne
-// Cette fonction ajoute une nouvelle donnée à une colonne donnée
 void insererDonnee(Colonne* colonne, DataValue valeur) {
-    // Vérifier si la capacité maximale de la colonne est atteinte
     if (colonne->taille == colonne->capacite) {
-        // Augmenter la capacité de la colonne en doublant sa taille
         colonne->capacite *= 2;
-        // Réallouer de la mémoire pour le tableau de données avec la nouvelle capacité
         colonne->donnees = (Data*)realloc(colonne->donnees, sizeof(Data) * colonne->capacite);
-        // Vérifier si la réallocation a échoué
         if (colonne->donnees == NULL) {
             perror("Échec de la réallocation de mémoire");
-            exit(EXIT_FAILURE);  // Terminer le programme si la réallocation échoue
+            exit(EXIT_FAILURE);
         }
     }
-    // Ajouter la nouvelle donnée dans le tableau de données
     colonne->donnees[colonne->taille].value = valeur;
-    // Incrémenter la taille de la colonne
     colonne->taille++;
 }
 
-// Afficher le contenu de la colonne
-// Cette fonction affiche les informations et les données de la colonne
 void afficherColonne(const Colonne* colonne) {
-    // Afficher le nom de la colonne
-    printf("Colonne: %s\n", colonne->nom);
-    // Parcourir et afficher chaque donnée de la colonne
-    for (int i = 0; i < colonne->taille; i++) {
-        // Afficher la valeur de la donnée en fonction de son type
-        switch (colonne->donnees[i].type) {
-            case INT:
-                printf("%d ", colonne->donnees[i].value.int_val);
-                break;
-            case FLOAT:
-                printf("%f ", colonne->donnees[i].value.float_val);
-                break;
-            case DOUBLE:
-                printf("%lf ", colonne->donnees[i].value.double_val);
-                break;
-            case CHAR:
-                printf("%c ", colonne->donnees[i].value.char_val);
-                break;
-            case STRING:
-                printf("%s ", colonne->donnees[i].value.string_val);
-                break;
-            default:
-                printf("Type inconnu ");
-        }
+    printf("| %s ", colonne->nom);
+    int nomLen = strlen(colonne->nom);
+    for (int i = nomLen; i < 10; i++) {
+        printf(" ");
     }
-    printf("\n");  // Nouvelle ligne après l'affichage de toutes les données
+}
+void afficherColonneAvecNom(const char* nom) {
+    printf("| %s ", nom);
+    int nomLen = strlen(nom);
+    for (int i = nomLen; i < 10; i++) {
+        printf(" ");
+    }
 }
 
-// Libérer la mémoire allouée pour la colonne
-// Cette fonction libère toute la mémoire allouée pour une colonne donnée
+void afficherDonneesColonne(const Colonne* colonne, int index) {
+    if (index < colonne->taille) {
+        switch (colonne->donnees[index].type) {
+            case INT:
+                printf("| %10d ", colonne->donnees[index].value.int_val);
+                break;
+            case FLOAT:
+                printf("| %10.2f ", colonne->donnees[index].value.float_val);
+                break;
+            case DOUBLE:
+                printf("| %10.2lf ", colonne->donnees[index].value.double_val);
+                break;
+            case CHAR:
+                printf("| %10c ", colonne->donnees[index].value.char_val);
+                break;
+            case STRING:
+                printf("| %-10s ", colonne->donnees[index].value.string_val);
+                break;
+            default:
+                printf("| %-10s ", "Type inconnu");
+        }
+    } else {
+        printf("| %-10s ", " ");
+    }
+}
+
+void afficherLigneSeparateur(int nombreColonnes) {
+    for (int i = 0; i < nombreColonnes; i++) {
+        printf("|____________");
+    }
+    printf("|\n");
+}
+
 void libererColonne(Colonne* colonne) {
-    // Si le type des données est STRING, libérer chaque chaîne de caractères
-    if (colonne->donnees[0].type == STRING) {  // Supposer que tous les éléments sont du même type
+    if (colonne->donnees[0].type == STRING) {
         for (int i = 0; i < colonne->taille; i++) {
-            free(colonne->donnees[i].value.string_val);  // Libérer la mémoire de la chaîne de caractères
+            free(colonne->donnees[i].value.string_val);
         }
     }
-    // Libérer la mémoire allouée pour le tableau de données
     free(colonne->donnees);
-    // Libérer la mémoire allouée pour le nom de la colonne
     free(colonne->nom);
-    // Libérer la mémoire allouée pour la structure Colonne elle-même
     free(colonne);
 }
