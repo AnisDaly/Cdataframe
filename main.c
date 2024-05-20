@@ -4,6 +4,7 @@
 #include "fonction_avancee.h"
 #include "column.h"
 
+// Fonction pour saisir une donnée selon le type spécifié
 void saisirDonnee(DataType type, DataValue *valeur) {
     switch (type) {
         case INT:
