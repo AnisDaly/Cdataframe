@@ -7,12 +7,12 @@
 typedef struct {
     Colonne** colonnes;  // Tableau de pointeurs vers les colonnes
     int nombreColonnes;  // Nombre actuel de colonnes dans le dataframe
-    int capacite;        // CapacitÃ© maximale du dataframe
+    int capacite;        // Capacité maximale du dataframe
 } CDataframe;
 
 CDataframe* creerCDataframe(int capacite);
 void ajouterColonne(CDataframe* dataframe, Colonne* colonne);
-void afficherCDataframe(const CDataframe* dataframe);
+void afficherCDataframe(const CDataframe* dataframe, const char* nomsColonnes[]);
 void libererCDataframe(CDataframe* dataframe);
 
-#endif
+#endif // CDATAFRAME_H
