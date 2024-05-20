@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "cdataframe.h"
 #include "fonction_avancee.h"
+#include "column.h"
 
 void saisirDonnee(DataType type, DataValue *valeur) {
     switch (type) {
@@ -40,7 +40,8 @@ int main() {
         printf("3. Trier une colonne\n");
         printf("4. Rechercher une valeur\n");
         printf("5. Calculer les statistiques d'une colonne\n");
-        printf("6. Quitter\n");
+        printf("6. Recherche dichotomique\n");
+        printf("7. Quitter\n");
         printf("Entrez votre choix :\n");
         scanf("%d", &choix);
 
@@ -97,6 +98,21 @@ int main() {
                 calculerStatistiques(dataframe->colonnes[indexColonne]);
                 break;
             case 6:
+                // Recherche dichotomique
+                printf("Quel est l'index de la colonne pour la recherche dichotomique ?\n");
+                int indexDicho;
+                scanf("%d", &indexDicho);
+                DataValue valeurDicho;
+                printf("Entrez la valeur à rechercher :\n");
+                saisirDonnee(dataframe->colonnes[indexDicho]->donnees[0].type, &valeurDicho);
+                int result = rechercheDichotomique(dataframe->colonnes[indexDicho], valeurDicho);
+                if (result != -1) {
+                    printf("Valeur trouvée à l'indice %d.\n", result);
+                } else {
+                    printf("Valeur non trouvée.\n");
+                }
+                break;
+            case 7:
                 continuer = 0;
                 break;
             default:
