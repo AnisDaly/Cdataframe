@@ -25,4 +25,4 @@ typedef struct {
     DataValue value; // Valeur de la donnée
 } Data;
 
-#endif
+#endif // DATA_TYPES_H
