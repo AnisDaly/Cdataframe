@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #include "cdataframe.h"
-#include "fonctions_avancee.h"
+#include "fonction_avancee.h"
 
 void saisirDonnee(DataType type, DataValue *valeur) {
     switch (type) {
