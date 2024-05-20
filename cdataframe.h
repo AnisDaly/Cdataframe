@@ -3,15 +3,16 @@
 
 #include "column.h"
 
+// Structure du CDataframe qui contient un tableau de pointeurs vers des colonnes
 typedef struct {
-    Column **colonnes;
-    int nombre_colonnes;
-    int capacite;
+    Colonne** colonnes;  // Tableau de pointeurs vers les colonnes
+    int nombreColonnes;  // Nombre actuel de colonnes dans le dataframe
+    int capacite;        // CapacitÃ© maximale du dataframe
 } CDataframe;
 
-void initialiserCDataframe(CDataframe *cdf, int capacite);
-void ajouterColonne(CDataframe *cdf, Column *colonne);
-void afficherCDataframe(const CDataframe *cdf);
-void libererCDataframe(CDataframe *cdf);
+CDataframe* creerCDataframe(int capacite);
+void ajouterColonne(CDataframe* dataframe, Colonne* colonne);
+void afficherCDataframe(const CDataframe* dataframe);
+void libererCDataframe(CDataframe* dataframe);
 
 #endif

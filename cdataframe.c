@@ -1,31 +1,47 @@
 #include "cdataframe.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-void initialiserCDataframe(CDataframe *cdf, int capacite) {
-    cdf->colonnes = malloc(sizeof(Column*) * capacite);
-    cdf->nombre_colonnes = 0;
-    cdf->capacite = capacite;
+// Créer un nouveau CDataframe avec une capacité initiale
+CDataframe* creerCDataframe(int capacite) {
+    CDataframe* dataframe = (CDataframe*)malloc(sizeof(CDataframe));
+    if (!dataframe) {
+        perror("Allocation mémoire échouée pour CDataframe");
+        exit(EXIT_FAILURE);
+    }
+    dataframe->colonnes = (Colonne**)malloc(sizeof(Colonne*) * capacite);
+    if (!dataframe->colonnes) {
+        perror("Allocation mémoire échouée pour les colonnes de CDataframe");
+        free(dataframe);
+        exit(EXIT_FAILURE);
+    }
+    dataframe->nombreColonnes = 0;
+    dataframe->capacite = capacite;
+    return dataframe;
 }
 
-void ajouterColonne(CDataframe *cdf, Column *colonne) {
-    if (cdf->nombre_colonnes < cdf->capacite) {
-        cdf->colonnes[cdf->nombre_colonnes++] = colonne;
-    } else {
-        printf("Le CDataframe a atteint sa capacite maximale.\n");
+// Ajouter une colonne au CDataframe
+void ajouterColonne(CDataframe* dataframe, Colonne* colonne) {
+    if (dataframe->nombreColonnes >= dataframe->capacite) {
+        printf("Capacité maximale atteinte. Impossible d'ajouter une nouvelle colonne.\n");
+        return;
+    }
+    dataframe->colonnes[dataframe->nombreColonnes++] = colonne;
+}
+
+// Afficher le contenu du CDataframe
+void afficherCDataframe(const CDataframe* dataframe) {
+    printf("CDataframe contient %d colonnes:\n", dataframe->nombreColonnes);
+    for (int i = 0; i < dataframe->nombreColonnes; i++) {
+        afficherColonne(dataframe->colonnes[i]);
     }
 }
 
-void afficherCDataframe(const CDataframe *cdf) {
-    for (int i = 0; i < cdf->nombre_colonnes; i++) {
-        printf("Colonne %d: %s\n", i, cdf->colonnes[i]->nom);
-        afficherColonne(cdf->colonnes[i]);
+// Libérer la mémoire allouée pour le CDataframe et ses colonnes
+void libererCDataframe(CDataframe* dataframe) {
+    for (int i = 0; i < dataframe->nombreColonnes; i++) {
+        libererColonne(dataframe->colonnes[i]);
     }
-}
-
-void libererCDataframe(CDataframe *cdf) {
-    for (int i = 0; i < cdf->nombre_colonnes; i++) {
-        libererColonne(cdf->colonnes[i]);
-    }
-    free(cdf->colonnes);
+    free(dataframe->colonnes);
+    free(dataframe);
 }
